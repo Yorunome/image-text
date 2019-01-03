@@ -3,9 +3,10 @@ import pytesseract
 import argparse
 import cv2
 import os
+import mysql.connector
 
 #linking MYSQL database with the python program
-mydb = mysql.connector.connect(host='localhost', user='root', passwd='allenwalker', database='img_to_txt')
+mydb = mysql.connector.connect(host='localhost', user='root', passwd='allenwalker', database='img_to_text')
 mycr = mydb.cursor()
 
 #function to add the text in the table
@@ -45,10 +46,16 @@ cv2.imwrite(filename, gray)
 
 text = pytesseract.image_to_string(Image.open(filename))
 os.remove(filename)
-print(text)
+#print(text)
 update_table(filename, text)
+mydb.commit()
+mycr = mydb.cursor()
+mycr.execute("select * from fetcher")
+result = mycr.fetchall()
+for x in result:
+    print(x)
  
 # show the output images
-cv2.imshow("Image", image)
-cv2.imshow("Output", gray)
+#cv2.imshow("Image", image)
+#cv2.imshow("Output", gray)
 cv2.waitKey(0)
