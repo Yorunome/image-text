@@ -9,10 +9,10 @@ mydb = mysql.connector.connect(host='localhost', user='root', passwd='allenwalke
 mycr = mydb.cursor()
 
 #function to add the text in the table
-def update_table(text):
+def update_table(filename, text):
     print('table update block of ', text)
-    sql = """update fc set occur = occur + 1 where subject = %s"""
-    data = (text,)
+    sql = """insert into fetcher values (%s, %s)"""
+    data = (filename, text)
     mycr.execute(sql, data)
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
@@ -46,7 +46,7 @@ cv2.imwrite(filename, gray)
 text = pytesseract.image_to_string(Image.open(filename))
 os.remove(filename)
 print(text)
-
+update_table(filename, text)
  
 # show the output images
 cv2.imshow("Image", image)
