@@ -4,6 +4,16 @@ import argparse
 import cv2
 import os
 
+#linking MYSQL database with the python program
+mydb = mysql.connector.connect(host='localhost', user='root', passwd='allenwalker', database='img_to_txt')
+mycr = mydb.cursor()
+
+#function to add the text in the table
+def update_table(text):
+    print('table update block of ', text)
+    sql = """update fc set occur = occur + 1 where subject = %s"""
+    data = (text,)
+    mycr.execute(sql, data)
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 # construct the argument parse and parse the arguments
@@ -36,6 +46,7 @@ cv2.imwrite(filename, gray)
 text = pytesseract.image_to_string(Image.open(filename))
 os.remove(filename)
 print(text)
+
  
 # show the output images
 cv2.imshow("Image", image)
